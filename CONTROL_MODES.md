@@ -1,10 +1,13 @@
 # Control Modes
 
-Two firmware variants for different button configurations.
+Two firmware variants for different button configurations, each in its own Arduino project folder.
 
 ---
 
-## Mode 1: Three-Button Menu (av-remote.ino)
+## Mode 1: Three-Button Menu
+
+**Folder:** `av-remote/`  
+**File:** `av-remote.ino`
 
 **Use if:** Your M5StickC PLUS2 has accessible buttons A, B, C
 
@@ -25,7 +28,10 @@ Two firmware variants for different button configurations.
 
 ---
 
-## Mode 2: Single-Button Click/Double-Click (av-remote-single-button.ino)
+## Mode 2: Single-Button Click/Double-Click
+
+**Folder:** `av-remote-single-button/`  
+**File:** `av-remote-single-button.ino`
 
 **Use if:** Only one button is practically accessible (Button C)
 
@@ -46,41 +52,21 @@ Two firmware variants for different button configurations.
 
 ---
 
-## Quick Start
+## How to Upload (Arduino IDE)
 
 ### Mode 1 (Three-Button)
-```cpp
-// Use default sketch
-// src/av-remote.ino
-```
 
-1. Upload via Arduino IDE
-2. Button A/B = navigate, Button C = select
-3. Done
+1. Open Arduino IDE
+2. File → Open → Navigate to `av-remote/av-remote.ino`
+3. Select your board: Tools → Board → ESP32 → M5StickCPlus2
+4. Select port: Tools → Port → `/dev/cu.usbserial-*` (macOS) or `COM*` (Windows)
+5. Upload: Sketch → Upload (or Ctrl+U / Cmd+U)
 
 ### Mode 2 (Single-Button)
-```cpp
-// Use single-button variant
-// src/av-remote-single-button.ino
-```
 
-1. Rename/replace with `av-remote.ino`
-2. Upload via Arduino IDE
-3. Single click to cycle, double-click to send
-
----
-
-## Switching Modes
-
-```bash
-# Mode 1 (three-button)
-cp src/av-remote.ino src/av-remote.ino.bak
-# Use original
-
-# Mode 2 (single-button)
-cp src/av-remote-single-button.ino src/av-remote.ino
-# Now upload
-```
+1. Open Arduino IDE
+2. File → Open → Navigate to `av-remote-single-button/av-remote-single-button.ino`
+3. Same steps as above (board, port, upload)
 
 ---
 
@@ -93,3 +79,16 @@ cp src/av-remote-single-button.ino src/av-remote.ino
 
 If you can reach all 3 buttons comfortably, use **Mode 1 (three-button)**.  
 If only Button C is practical (wearable scenario), use **Mode 2 (single-button)**.
+
+---
+
+## Troubleshooting
+
+**"Sketch file was not found"**  
+→ Make sure you're opening the `.ino` file from within its folder (e.g., `av-remote/av-remote.ino`)
+
+**"Board not found"**  
+→ Install M5StickCPlus2 library via Sketch → Include Library → Manage Libraries
+
+**"Port not recognized"**  
+→ Reinstall CH9102 driver (see docs/HARDWARE_SETUP.md)

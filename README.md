@@ -37,9 +37,9 @@ Universal infrared blaster for AV devices using M5StickC PLUS2.
 2. Install Arduino IDE + ESP32 board manager
 3. Add M5StickCPlus2 library via Arduino IDE Library Manager
 4. Add Arduino-IRremote library (same)
-5. **Choose your control mode:**
-   - **Mode 1 (Three-Button):** `src/av-remote.ino` — Full menu navigation
-   - **Mode 2 (Single-Button):** `src/av-remote-single-button.ino` — Click/double-click
+5. **Choose your control mode and open the folder:**
+   - **Mode 1 (Three-Button):** Open `av-remote/` folder → `av-remote.ino` — Full menu navigation
+   - **Mode 2 (Single-Button):** Open `av-remote-single-button/` folder → `av-remote-single-button.ino` — Click/double-click
 6. Upload to device via Arduino IDE
 
 See [CONTROL_MODES.md](CONTROL_MODES.md) for details.

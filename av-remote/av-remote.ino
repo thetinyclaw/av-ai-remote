@@ -1,10 +1,10 @@
 /*
  * AV AI Remote — IR Blaster Sketch for M5StickC PLUS2
  * 
- * Path 1: Quick Prototype
- * - Hardcoded NEC IR codes for common AV devices
+ * Path 1: Quick Prototype - THREE BUTTON MODE
+ * - Hardcoded NEC IR codes for Samsung TV
  * - Menu UI on display
- * - Button-driven control
+ * - Button-driven control (A=up, B=down, C=select)
  * 
  * Hardware: M5StickC PLUS2 (ESP32-PICO-V3-02)
  * IR Pin: GPIO19
@@ -144,6 +144,12 @@ void renderTVMenu() {
   }
 }
 
+void renderSoundbarMenu() {
+  clearDisplay();
+  drawHeader("SOUNDBAR");
+  drawText("Coming soon...", 67, 120, TFT_YELLOW);
+}
+
 // ============================================================================
 // IR TRANSMISSION
 // ============================================================================
@@ -167,6 +173,10 @@ void handleTVCommand(uint8_t item) {
     case 8: sendIRCode(SAMSUNG_ADDR, SAM_INFO); break;
     case 9: currentMenu = MENU_MAIN; selectedItem = 0; break;  // Back
   }
+}
+
+void handleSoundbarCommand(uint8_t item) {
+  // TODO: Add soundbar codes
 }
 
 // ============================================================================
@@ -223,7 +233,7 @@ void setup() {
   IrSender.begin(DISABLE_LED_FEEDBACK);
   IrSender.setSendPin(IR_TX_PIN);
 
-  Serial.println("AV AI Remote initialized!");
+  Serial.println("AV AI Remote (THREE BUTTON MODE) initialized!");
   Serial.println("Button A: Up | Button B: Down | Button C: Select/Back");
 }
 
