@@ -79,7 +79,7 @@ void clearDisplay() {
 void drawHeader(const char* title) {
   StickCP2.Display.setTextColor(TFT_WHITE);
   StickCP2.Display.drawString(title, 67, 15);
-  StickCP2.Display.drawLine(0, 25, 135, 25, TFT_GREY);
+  StickCP2.Display.drawLine(0, 25, 135, 25, TFT_DARKGREY);
 }
 
 void drawText(const char* text, uint16_t x, uint16_t y, uint16_t color = TFT_GREEN) {

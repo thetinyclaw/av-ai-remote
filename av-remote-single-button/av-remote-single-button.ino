@@ -86,7 +86,7 @@ void clearDisplay() {
 void drawHeader(const char* title) {
   StickCP2.Display.setTextColor(TFT_WHITE);
   StickCP2.Display.drawString(title, 67, 15);
-  StickCP2.Display.drawLine(0, 25, 135, 25, TFT_GREY);
+  StickCP2.Display.drawLine(0, 25, 135, 25, TFT_DARKGREY);
 }
 
 void renderCommandMenu() {
@@ -148,11 +148,11 @@ void sendIRCode(uint16_t addr, uint8_t cmd) {
 // ============================================================================
 
 void handleButtonPress() {
-  // Check Button C (power/user button)
-  if (StickCP2.BtnC.wasPressed()) {
+  // Check Button A (GPIO37 — user button)
+  if (StickCP2.BtnA.wasPressed()) {
     unsigned long now = millis();
     unsigned long timeSinceLastClick = now - lastClickTime;
-    
+
     Serial.printf("Button pressed. Time since last: %lu ms\n", timeSinceLastClick);
 
     if (timeSinceLastClick < DOUBLE_CLICK_TIMEOUT) {
@@ -169,7 +169,7 @@ void handleButtonPress() {
   }
 
   // Long press detection (held for 1+ second)
-  if (StickCP2.BtnC.isPressed() && StickCP2.BtnC.pressedFor(1000)) {
+  if (StickCP2.BtnA.isHeld()) {
     // Go back to home (cycle backwards)
     Serial.println("Long press detected!");
     if (currentCommand > 0) {
