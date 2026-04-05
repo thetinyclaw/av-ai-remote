@@ -169,7 +169,7 @@ void handleButtonPress() {
   }
 
   // Long press detection (held for 1+ second)
-  if (StickCP2.BtnA.isHeld()) {
+  if (StickCP2.BtnA.pressedFor(1000)) {
     // Go back to home (cycle backwards)
     Serial.println("Long press detected!");
     if (currentCommand > 0) {
