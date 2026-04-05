@@ -22,23 +22,31 @@
 #include <IRremote.hpp>
 
 // ============================================================================
-// IR CODE DATABASE (NEC Protocol: Address, Command)
+// IR CODE DATABASE (Samsung AA59 Remote - 32-bit format)
+// Protocol: Samsung (extended NEC variant)
+// Address: 0xE0E0 (Samsung TV address)
+// Command: See below
 // ============================================================================
 
-// Common TV codes (example: LG TV)
-const uint16_t TV_ADDR = 0x04FB;
-const uint8_t TV_POWER  = 0x40;
-const uint8_t TV_VOL_UP = 0x18;
-const uint8_t TV_VOL_DN = 0x19;
-const uint8_t TV_CH_UP  = 0x00;
-const uint8_t TV_CH_DN  = 0x01;
-const uint8_t TV_MUTE   = 0x65;
+const uint16_t SAMSUNG_ADDR = 0xE0E0;
 
-// Soundbar codes (example: generic)
-const uint16_t SB_ADDR = 0x0000;
-const uint8_t SB_POWER = 0x00;
-const uint8_t SB_VOL_UP = 0x01;
-const uint8_t SB_VOL_DN = 0x02;
+// Samsung TV Commands (8-bit)
+const uint8_t SAM_POWER   = 0xBF;  // Standby toggle
+const uint8_t SAM_VOL_UP  = 0x1F;  // Volume up
+const uint8_t SAM_VOL_DN  = 0x2F;  // Volume down
+const uint8_t SAM_CH_UP   = 0xB7;  // Channel up
+const uint8_t SAM_CH_DN   = 0xF7;  // Channel down
+const uint8_t SAM_MUTE    = 0x0F;  // Mute toggle
+const uint8_t SAM_MENU    = 0xA7;  // Menu
+const uint8_t SAM_ENTER   = 0xE9;  // Enter/OK
+const uint8_t SAM_UP      = 0xF9;  // Up arrow
+const uint8_t SAM_DOWN    = 0x79;  // Down arrow
+const uint8_t SAM_LEFT    = 0x59;  // Left arrow
+const uint8_t SAM_RIGHT   = 0xB9;  // Right arrow
+const uint8_t SAM_RETURN  = 0xE5;  // Return/Back
+const uint8_t SAM_SOURCE  = 0x7F;  // Source/Input
+const uint8_t SAM_INFO    = 0x07;  // Info
+const uint8_t SAM_GUIDE   = 0x0D;  // Guide
 
 // ============================================================================
 // UI STATE
@@ -94,12 +102,12 @@ void renderMainMenu() {
 
   if (selectedItem == 0) {
     drawHighlight(0, 50);
-    drawText("TV", 67, 50);
-    drawText("Soundbar", 67, 80, TFT_GREEN);
+    drawText("Samsung TV", 67, 50);
+    drawText("TV Control", 67, 80, TFT_GREEN);
   } else {
-    drawText("TV", 67, 50, TFT_GREEN);
+    drawText("Samsung TV", 67, 50, TFT_GREEN);
     drawHighlight(1, 80);
-    drawText("Soundbar", 67, 80);
+    drawText("TV Control", 67, 80);
   }
 
   drawText("[C] Select", 67, 110, TFT_YELLOW);
@@ -107,32 +115,25 @@ void renderMainMenu() {
 
 void renderTVMenu() {
   clearDisplay();
-  drawHeader("TV CONTROL");
+  drawHeader("SAMSUNG TV");
 
-  const char* items[] = {"Power", "Vol +", "Vol -", "Ch +", "Ch -", "Mute", "Back"};
-  uint8_t numItems = 7;
-
-  for (uint8_t i = 0; i < numItems; i++) {
-    uint16_t y = 40 + (i * 20);
-
-    if (i == selectedItem) {
-      drawHighlight(i, y);
-      drawText(items[i], 67, y);
-    } else {
-      drawText(items[i], 67, y, TFT_GREEN);
-    }
-  }
-}
-
-void renderSoundbarMenu() {
-  clearDisplay();
-  drawHeader("SOUNDBAR");
-
-  const char* items[] = {"Power", "Vol +", "Vol -", "Back"};
-  uint8_t numItems = 4;
+  const char* items[] = {
+    "Power",    // 0
+    "Vol +",    // 1
+    "Vol -",    // 2
+    "Ch +",     // 3
+    "Ch -",     // 4
+    "Mute",     // 5
+    "Menu",     // 6
+    "Source",   // 7
+    "Info",     // 8
+    "Back"      // 9
+  };
+  uint8_t numItems = 10;
 
   for (uint8_t i = 0; i < numItems; i++) {
-    uint16_t y = 50 + (i * 25);
+    uint16_t y = 35 + (i * 18);
+    if (y > 235) continue;  // Skip off-screen items
 
     if (i == selectedItem) {
       drawHighlight(i, y);
@@ -155,22 +156,16 @@ void sendIRCode(uint16_t addr, uint8_t cmd) {
 
 void handleTVCommand(uint8_t item) {
   switch (item) {
-    case 0: sendIRCode(TV_ADDR, TV_POWER); break;
-    case 1: sendIRCode(TV_ADDR, TV_VOL_UP); break;
-    case 2: sendIRCode(TV_ADDR, TV_VOL_DN); break;
-    case 3: sendIRCode(TV_ADDR, TV_CH_UP); break;
-    case 4: sendIRCode(TV_ADDR, TV_CH_DN); break;
-    case 5: sendIRCode(TV_ADDR, TV_MUTE); break;
-    case 6: currentMenu = MENU_MAIN; selectedItem = 0; break;  // Back
-  }
-}
-
-void handleSoundbarCommand(uint8_t item) {
-  switch (item) {
-    case 0: sendIRCode(SB_ADDR, SB_POWER); break;
-    case 1: sendIRCode(SB_ADDR, SB_VOL_UP); break;
-    case 2: sendIRCode(SB_ADDR, SB_VOL_DN); break;
-    case 3: currentMenu = MENU_MAIN; selectedItem = 0; break;  // Back
+    case 0: sendIRCode(SAMSUNG_ADDR, SAM_POWER); break;
+    case 1: sendIRCode(SAMSUNG_ADDR, SAM_VOL_UP); break;
+    case 2: sendIRCode(SAMSUNG_ADDR, SAM_VOL_DN); break;
+    case 3: sendIRCode(SAMSUNG_ADDR, SAM_CH_UP); break;
+    case 4: sendIRCode(SAMSUNG_ADDR, SAM_CH_DN); break;
+    case 5: sendIRCode(SAMSUNG_ADDR, SAM_MUTE); break;
+    case 6: sendIRCode(SAMSUNG_ADDR, SAM_MENU); break;
+    case 7: sendIRCode(SAMSUNG_ADDR, SAM_SOURCE); break;
+    case 8: sendIRCode(SAMSUNG_ADDR, SAM_INFO); break;
+    case 9: currentMenu = MENU_MAIN; selectedItem = 0; break;  // Back
   }
 }
 
@@ -188,7 +183,7 @@ void handleButtonPress() {
     // Button B: Navigate down
     uint8_t maxItems = 0;
     if (currentMenu == MENU_MAIN) maxItems = 2;
-    else if (currentMenu == MENU_TV) maxItems = 7;
+    else if (currentMenu == MENU_TV) maxItems = 10;
     else if (currentMenu == MENU_SOUNDBAR) maxItems = 4;
 
     if (selectedItem < maxItems - 1) selectedItem++;
