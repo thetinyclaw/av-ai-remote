@@ -13,28 +13,28 @@ struct Command {
 // These are the ubiquitous NEC-style 24/44-key IR controller codes using 0xFFxx.. frames.
 // If Alec's strip uses a different receiver, we can add a learn/sniff mode later.
 static const Command COMMANDS[] = {
-  {"Power",       0xFF02FD},
-  {"Bright +",    0xFF3AC5},
-  {"Bright -",    0xFFBA45},
-  {"Play/Pause",  0xFF827D},
-  {"Red",         0xFF1AE5},
-  {"Green",       0xFF9A65},
-  {"Blue",        0xFFA25D},
-  {"White",       0xFF22DD},
-  {"Orange",      0xFF2AD5},
-  {"Lime",        0xFFAA55},
-  {"Cyan",        0xFF926D},
-  {"Warm White",  0xFF12ED},
-  {"Yellow",      0xFF0AF5},
-  {"Aqua",        0xFF8A75},
-  {"Purple",      0xFFB24D},
-  {"Pink",        0xFF32CD},
-  {"Jump3",       0xFFB04F},
-  {"Jump7",       0xFF30CF},
-  {"Fade3",       0xFF708F},
-  {"Fade7",       0xFFF00F},
-  {"Flash",       0xFFD02F},
-  {"Auto",        0xFFE01F},
+  {"Power",       0x00FF02FD},
+  {"Bright +",    0x00FF3AC5},
+  {"Bright -",    0x00FFBA45},
+  {"Play/Pause",  0x00FF827D},
+  {"Red",         0x00FF1AE5},
+  {"Green",       0x00FF9A65},
+  {"Blue",        0x00FFA25D},
+  {"White",       0x00FF22DD},
+  {"Orange",      0x00FF2AD5},
+  {"Lime",        0x00FFAA55},
+  {"Cyan",        0x00FF926D},
+  {"Warm White",  0x00FF12ED},
+  {"Yellow",      0x00FF0AF5},
+  {"Aqua",        0x00FF8A75},
+  {"Purple",      0x00FFB24D},
+  {"Pink",        0x00FF32CD},
+  {"Jump3",       0x00FFB04F},
+  {"Jump7",       0x00FF30CF},
+  {"Fade3",       0x00FF708F},
+  {"Fade7",       0x00FFF00F},
+  {"Flash",       0x00FFD02F},
+  {"Auto",        0x00FFE01F},
 };
 static const size_t COMMAND_COUNT = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
 
@@ -58,7 +58,7 @@ void drawUi(const char* status = nullptr) {
   M5.Display.drawString(c.name, M5.Display.width() / 2, 34);
 
   char buf[64];
-  snprintf(buf, sizeof(buf), "NEC raw 0x%06lX", (unsigned long)c.raw);
+  snprintf(buf, sizeof(buf), "NEC 0x%08lX", (unsigned long)c.raw);
   M5.Display.setTextColor(TFT_GREEN, TFT_BLACK);
   M5.Display.setTextSize(1);
   M5.Display.drawString(buf, M5.Display.width() / 2, 72);
@@ -79,13 +79,21 @@ void drawUi(const char* status = nullptr) {
 
 void sendSelected() {
   const Command& c = COMMANDS[selected];
-  Serial.printf("BLAST LED %s raw=0x%06lX pin=%d\n", c.name, (unsigned long)c.raw, IR_SEND_PIN);
-  drawUi("BLAST!");
+  uint8_t address = (uint8_t)((c.raw >> 24) & 0xFF);
+  uint8_t command = (uint8_t)((c.raw >> 8) & 0xFF);
+  Serial.printf("BLAST LED %s raw=0x%08lX addr=0x%02X cmd=0x%02X pin=%d\n",
+                c.name, (unsigned long)c.raw, address, command, IR_SEND_PIN);
+  drawUi("TRI-BLAST!");
 
-  // Send repeated full frames so finicky LED controllers have a better chance to catch it.
-  for (int i = 0; i < 5; i++) {
+  // Cheap LED receivers are inconsistent about NEC byte/bit ordering in published code tables.
+  // Send all common interpretations: modern address/command, old MSB 32-bit, and raw LSB.
+  for (int i = 0; i < 2; i++) {
+    IrSender.sendNEC(address, command, 0);
+    delay(75);
+    IrSender.sendNECMSB(c.raw, 32, false);
+    delay(75);
     IrSender.sendNECRaw(c.raw, 0);
-    delay(70);
+    delay(75);
   }
   lastSend = millis();
 }
