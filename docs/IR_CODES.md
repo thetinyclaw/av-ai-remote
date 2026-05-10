@@ -1,5 +1,20 @@
 # IR Code Reference
 
+## Confirmed: Alec's LED Strip IR Protocol — EF24
+
+**Confirmed:** 2026-05-10 via M5StickC IR blaster testing.
+
+Alec's LED strip receiver responds to the **EF24** command family, not the common 44-key `00FFxxxx` RGB-strip table.
+
+**Format:** NEC-style 32-bit frames  
+**Observed family:** `EF24 00–23` emitted as `0x00F7xxxx` candidate codes  
+**Firmware:** `/Users/tinyclaw/GitHub/av-ai-remote/m5-ir-blaster`  
+**M5 mapping:** Button A = fire/action/blast; Button B = previous command; Button C = next command.
+
+Use the EF24 list as the known-good protocol for this strip.
+
+---
+
 ## Protocol: Samsung AA59 Remote (Extended NEC)
 
 **Format:** 32-bit Samsung protocol (extended NEC variant)

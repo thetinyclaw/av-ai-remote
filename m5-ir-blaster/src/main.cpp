@@ -9,32 +9,33 @@ struct Command {
   uint32_t raw;
 };
 
-// Common cheap RGB LED strip remote codes.
-// These are the ubiquitous NEC-style 24/44-key IR controller codes using 0xFFxx.. frames.
-// If Alec's strip uses a different receiver, we can add a learn/sniff mode later.
+// Alec's LED strip receiver: confirmed EF24 family.
+// Resolved as a 24-key RGB remote grid, numbered left-to-right/top-to-bottom.
 static const Command COMMANDS[] = {
-  {"Power",       0x00FF02FD},
-  {"Bright +",    0x00FF3AC5},
-  {"Bright -",    0x00FFBA45},
-  {"Play/Pause",  0x00FF827D},
-  {"Red",         0x00FF1AE5},
-  {"Green",       0x00FF9A65},
-  {"Blue",        0x00FFA25D},
-  {"White",       0x00FF22DD},
-  {"Orange",      0x00FF2AD5},
-  {"Lime",        0x00FFAA55},
-  {"Cyan",        0x00FF926D},
-  {"Warm White",  0x00FF12ED},
-  {"Yellow",      0x00FF0AF5},
-  {"Aqua",        0x00FF8A75},
-  {"Purple",      0x00FFB24D},
-  {"Pink",        0x00FF32CD},
-  {"Jump3",       0x00FFB04F},
-  {"Jump7",       0x00FF30CF},
-  {"Fade3",       0x00FF708F},
-  {"Fade7",       0x00FFF00F},
-  {"Flash",       0x00FFD02F},
-  {"Auto",        0x00FFE01F},
+  {"Bright +",    0x00F700FF},
+  {"Bright -",    0x00F7807F},
+  {"Off",         0x00F740BF},
+  {"On",          0x00F7C03F},
+  {"Red",         0x00F720DF},
+  {"Green",       0x00F7A05F},
+  {"Blue",        0x00F7609F},
+  {"White",       0x00F7E01F},
+  {"Orange",      0x00F710EF},
+  {"Mint",        0x00F7906F},
+  {"Royal Blue",  0x00F750AF},
+  {"Warm White",  0x00F7D02F},
+  {"Yellow",      0x00F730CF},
+  {"Cyan",        0x00F7B04F},
+  {"Purple",      0x00F7708F},
+  {"Strobe",      0x00F7F00F},
+  {"Amber",       0x00F708F7},
+  {"Yellow",      0x00F78877},
+  {"Cyan",        0x00F748B7},
+  {"Purple",      0x00F7C837},
+  {"Amber",       0x00F728D7},
+  {"Aqua",        0x00F7A857},
+  {"Magenta",     0x00F76897},
+  {"Smooth",      0x00F7E817},
 };
 static const size_t COMMAND_COUNT = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
 
@@ -44,36 +45,38 @@ uint32_t lastSend = 0;
 
 void drawUi(const char* status = nullptr) {
   M5.Display.fillScreen(TFT_BLACK);
-  M5.Display.setRotation(1);
+  M5.Display.setRotation(3);
   M5.Display.setTextDatum(top_center);
 
   M5.Display.setTextColor(TFT_MAGENTA, TFT_BLACK);
   M5.Display.setTextSize(1);
-  M5.Display.drawString("LED STRIP IR REMOTE", M5.Display.width() / 2, 4);
+  M5.Display.drawString("LED STRIP 24-KEY GRID", M5.Display.width() / 2, 4);
   M5.Display.drawLine(0, 20, M5.Display.width(), 20, TFT_DARKGREY);
 
   const Command& c = COMMANDS[selected];
+  char buf[64];
+  snprintf(buf, sizeof(buf), "%02u  %s", (unsigned)selected, c.name);
   M5.Display.setTextColor(TFT_CYAN, TFT_BLACK);
   M5.Display.setTextSize(2);
-  M5.Display.drawString(c.name, M5.Display.width() / 2, 34);
+  M5.Display.drawString(buf, M5.Display.width() / 2, 34);
 
-  char buf[64];
   snprintf(buf, sizeof(buf), "NEC 0x%08lX", (unsigned long)c.raw);
   M5.Display.setTextColor(TFT_GREEN, TFT_BLACK);
   M5.Display.setTextSize(1);
   M5.Display.drawString(buf, M5.Display.width() / 2, 72);
 
-  snprintf(buf, sizeof(buf), "%u/%u", (unsigned)(selected + 1), (unsigned)COMMAND_COUNT);
+  snprintf(buf, sizeof(buf), "EF24 #%02u  R%uC%u  %u/%u", (unsigned)selected, (unsigned)(selected / 4 + 1), (unsigned)(selected % 4 + 1), (unsigned)(selected + 1), (unsigned)COMMAND_COUNT);
   M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
   M5.Display.drawString(buf, M5.Display.width() / 2, 92);
 
   M5.Display.setTextColor(TFT_YELLOW, TFT_BLACK);
-  M5.Display.drawString("A/B: choose   C: blast", M5.Display.width() / 2, 112);
+  M5.Display.drawString("B/C: choose   A: blast", M5.Display.width() / 2, 112);
   M5.Display.drawString("Serial: n p s 0-9", M5.Display.width() / 2, 126);
+  M5.Display.drawString("24-key grid: L->R, top->bottom", M5.Display.width() / 2, 140);
 
   if (status) {
     M5.Display.setTextColor(TFT_RED, TFT_BLACK);
-    M5.Display.drawString(status, M5.Display.width() / 2, 144);
+    M5.Display.drawString(status, M5.Display.width() / 2, 154);
   }
 }
 
@@ -138,9 +141,9 @@ void setup() {
   IrSender.begin();
 
   Serial.println();
-  Serial.println("M5 LED Strip IR Blaster ready");
+  Serial.println("M5 LED Strip 24-key grid ready - EF24 confirmed");
   Serial.printf("IR TX pin: GPIO%d\n", IR_SEND_PIN);
-  Serial.println("Buttons: A/B choose, C blasts. Serial: n next, p prev, s send, 0-9 select.");
+  Serial.println("Buttons: B/C choose, A blasts. Serial: n next, p prev, s send, 0-9 select.");
   drawUi("READY");
 }
 
@@ -148,9 +151,9 @@ void loop() {
   M5.update();
   handleSerial();
 
-  if (M5.BtnA.wasPressed()) nextCommand();
+  if (M5.BtnA.wasPressed()) sendSelected();
   if (M5.BtnB.wasPressed()) prevCommand();
-  if (M5.BtnC.wasPressed()) sendSelected();
+  if (M5.BtnC.wasPressed()) nextCommand();
 
   if (lastSend && millis() - lastSend > 600) {
     lastSend = 0;
