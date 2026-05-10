@@ -6,23 +6,35 @@
 
 struct Command {
   const char* name;
-  uint16_t address;
-  uint8_t command;
+  uint32_t raw;
 };
 
-// Samsung-style NEC/extended NEC commands. Good first target for validating TX.
+// Common cheap RGB LED strip remote codes.
+// These are the ubiquitous NEC-style 24/44-key IR controller codes using 0xFFxx.. frames.
+// If Alec's strip uses a different receiver, we can add a learn/sniff mode later.
 static const Command COMMANDS[] = {
-  {"Samsung Power", 0xE0E0, 0xBF},
-  {"Samsung Vol+",  0xE0E0, 0x1F},
-  {"Samsung Vol-",  0xE0E0, 0x2F},
-  {"Samsung Mute",  0xE0E0, 0x0F},
-  {"Samsung Source",0xE0E0, 0x7F},
-  {"Samsung Up",    0xE0E0, 0xF9},
-  {"Samsung Down",  0xE0E0, 0x79},
-  {"Samsung Left",  0xE0E0, 0x59},
-  {"Samsung Right", 0xE0E0, 0xB9},
-  {"Samsung OK",    0xE0E0, 0xE9},
-  {"Samsung Back",  0xE0E0, 0xE5},
+  {"Power",       0xFF02FD},
+  {"Bright +",    0xFF3AC5},
+  {"Bright -",    0xFFBA45},
+  {"Play/Pause",  0xFF827D},
+  {"Red",         0xFF1AE5},
+  {"Green",       0xFF9A65},
+  {"Blue",        0xFFA25D},
+  {"White",       0xFF22DD},
+  {"Orange",      0xFF2AD5},
+  {"Lime",        0xFFAA55},
+  {"Cyan",        0xFF926D},
+  {"Warm White",  0xFF12ED},
+  {"Yellow",      0xFF0AF5},
+  {"Aqua",        0xFF8A75},
+  {"Purple",      0xFFB24D},
+  {"Pink",        0xFF32CD},
+  {"Jump3",       0xFFB04F},
+  {"Jump7",       0xFF30CF},
+  {"Fade3",       0xFF708F},
+  {"Fade7",       0xFFF00F},
+  {"Flash",       0xFFD02F},
+  {"Auto",        0xFFE01F},
 };
 static const size_t COMMAND_COUNT = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
 
@@ -35,9 +47,9 @@ void drawUi(const char* status = nullptr) {
   M5.Display.setRotation(1);
   M5.Display.setTextDatum(top_center);
 
-  M5.Display.setTextColor(TFT_ORANGE, TFT_BLACK);
+  M5.Display.setTextColor(TFT_MAGENTA, TFT_BLACK);
   M5.Display.setTextSize(1);
-  M5.Display.drawString("M5 IR BLASTER", M5.Display.width() / 2, 4);
+  M5.Display.drawString("LED STRIP IR REMOTE", M5.Display.width() / 2, 4);
   M5.Display.drawLine(0, 20, M5.Display.width(), 20, TFT_DARKGREY);
 
   const Command& c = COMMANDS[selected];
@@ -46,7 +58,7 @@ void drawUi(const char* status = nullptr) {
   M5.Display.drawString(c.name, M5.Display.width() / 2, 34);
 
   char buf[64];
-  snprintf(buf, sizeof(buf), "addr 0x%04X cmd 0x%02X", c.address, c.command);
+  snprintf(buf, sizeof(buf), "NEC raw 0x%06lX", (unsigned long)c.raw);
   M5.Display.setTextColor(TFT_GREEN, TFT_BLACK);
   M5.Display.setTextSize(1);
   M5.Display.drawString(buf, M5.Display.width() / 2, 72);
@@ -67,13 +79,13 @@ void drawUi(const char* status = nullptr) {
 
 void sendSelected() {
   const Command& c = COMMANDS[selected];
-  Serial.printf("BLAST %s addr=0x%04X cmd=0x%02X pin=%d\n", c.name, c.address, c.command, IR_SEND_PIN);
+  Serial.printf("BLAST LED %s raw=0x%06lX pin=%d\n", c.name, (unsigned long)c.raw, IR_SEND_PIN);
   drawUi("BLAST!");
 
-  // Send three times for reliability; many remotes repeat while held.
-  for (int i = 0; i < 3; i++) {
-    IrSender.sendNEC(c.address, c.command, 0);
-    delay(90);
+  // Send repeated full frames so finicky LED controllers have a better chance to catch it.
+  for (int i = 0; i < 5; i++) {
+    IrSender.sendNECRaw(c.raw, 0);
+    delay(70);
   }
   lastSend = millis();
 }
@@ -118,7 +130,7 @@ void setup() {
   IrSender.begin();
 
   Serial.println();
-  Serial.println("M5 IR Blaster ready");
+  Serial.println("M5 LED Strip IR Blaster ready");
   Serial.printf("IR TX pin: GPIO%d\n", IR_SEND_PIN);
   Serial.println("Buttons: A/B choose, C blasts. Serial: n next, p prev, s send, 0-9 select.");
   drawUi("READY");
