@@ -134,19 +134,29 @@ Initial macro requested by Alec. Current behavior: **one-shot mode only** for Ba
 1. HEOS
 2. Back
 3. Option
-4. Enter
-5. Right ×6
-6. Back
-7. Down
-8. Enter
-9. Down
-10. Right ×6
-11. Down
-12. Left ×6
-13. Back
-14. Back
+4. Down
+5. Enter
+6. Down
+7. Right ×2
+8. Back
+9. Back
 
 Available as **Bass boost** one-shot. One-shot mode uses `100 ms` between all commands/repeats.
+
+### Treble boost sequence
+
+1. HEOS
+2. Back
+3. Option
+4. Down
+5. Enter
+6. Down
+7. Down
+8. Right ×2
+9. Back
+10. Back
+
+Available as **Treble boost** one-shot. One-shot mode uses `100 ms` between all commands/repeats.
 
 ### Music reset sequence
 
@@ -169,6 +179,18 @@ Available as **Bass boost** one-shot. One-shot mode uses `100 ms` between all co
 17. Back
 
 Available as **Reset** one-shot. One-shot mode uses `100 ms` between all commands/repeats.
+
+### Subwoofer boost sequence
+
+1. HEOS
+2. Back
+3. Option
+4. Enter
+5. Right ×4
+6. Back
+7. Back
+
+Available as **Subwoofer boost** one-shot. One-shot mode uses `100 ms` between all commands/repeats.
 
 Notes: Macro V1 now starts from **HEOS** instead of Bluetooth. `Back` and `Option` use the validated Flipper/RC1253-style Denon Kaseikyo encoder; `Setup`, `Up`, `Down`, and `Left` use the validated service-table Denon/Sharp mappings; `Enter` and `Right` remain confirmed-good Denon mappings.
 
