@@ -15,6 +15,33 @@ Use the EF24 list as the known-good protocol for this strip.
 
 ---
 
+## In Progress: Denon AVR M5 Controller
+
+**Started:** 2026-05-10.
+
+The M5 firmware now has a second tool page: **DENON AVR TEST REMOTE**. Hold **B+C** to switch between the LED strip tool and Denon page.
+
+Initial Denon implementation uses Arduino-IRremote's built-in `sendDenon(address, command, repeats)` sender:
+
+```cpp
+IrSender.sendDenon(0x02, command, 1);
+```
+
+Candidate map loaded for testing:
+
+| # | Label | Address | Command | Confidence |
+|---|-------|---------|---------|------------|
+| 00 | Power On | `0x02` | `0xE1` | medium-high: decoded from Denon discrete power Pronto pattern |
+| 01 | Power Off | `0x02` | `0xE2` | medium-high: decoded from Denon discrete power Pronto pattern |
+| 02 | Vol + | `0x02` | `0xF1` | medium: common Denon/Sharp D=2 F=241 reference |
+| 03 | Vol - | `0x02` | `0xF2` | medium: common Denon/Sharp D=2 F=242 reference |
+| 04 | Mute | `0x02` | `0xF3` | guess adjacent to volume commands |
+| 05–11 | Inputs/modes/status | `0x02` | candidate guesses | low: needs testing/sniffing |
+
+Treat Denon labels as provisional until Alec tests them against the AVR or we sniff the original remote.
+
+---
+
 ## Protocol: Samsung AA59 Remote (Extended NEC)
 
 **Format:** 32-bit Samsung protocol (extended NEC variant)
@@ -93,3 +120,66 @@ Arduino-IRremote also supports:
 - Denon (depends on variant)
 
 Check library docs for syntax.
+
+## Denon Macro Mode — Bass Setup V1
+
+**Added:** 2026-05-12.
+
+M5 firmware page: **DENON MACROS**. Hold side button(s) to switch tools until the macro page appears, then tap **A** to run the selected one-shot macro.
+
+Initial macro requested by Alec. Current behavior: **one-shot mode only** for Bass boost and Reset. All one-shot macro commands/repeats are spaced at `100 ms`; faster repeated-button bursts caused AVR menu acceleration/coalescing issues.
+
+### Bass boost sequence
+
+1. HEOS
+2. Back
+3. Option
+4. Enter
+5. Right ×6
+6. Back
+7. Down
+8. Enter
+9. Down
+10. Right ×6
+11. Down
+12. Left ×6
+13. Back
+14. Back
+
+Available as **Bass boost** one-shot. One-shot mode uses `100 ms` between all commands/repeats.
+
+### Music reset sequence
+
+1. HEOS
+2. Back
+3. Option
+4. Enter
+5. Left ×48
+6. Right ×24
+7. Back
+8. Down
+9. Enter
+10. Down
+11. Left ×12
+12. Right ×6
+13. Down
+14. Left ×12
+15. Right ×6
+16. Back
+17. Back
+
+Available as **Reset** one-shot. One-shot mode uses `100 ms` between all commands/repeats.
+
+Notes: Macro V1 now starts from **HEOS** instead of Bluetooth. `Back` and `Option` use the validated Flipper/RC1253-style Denon Kaseikyo encoder; `Setup`, `Up`, `Down`, and `Left` use the validated service-table Denon/Sharp mappings; `Enter` and `Right` remain confirmed-good Denon mappings.
+
+
+## Denon Mapping Correction — 2026-05-12
+
+Alec tested the first Denon table and found these mappings were wrong/not firing: `Mute`, `Option`, `Bluetooth`, `Down`, `Left`, `Back`. He also confirmed two labels were definitely offset: old `Input Tuner` fired **PHONO**, and old `Input V.Aux` fired **CD**.
+
+Root cause: the first table mixed guessed Denon/Sharp command labels with modern Denon Kaseikyo remote commands. The firmware now uses:
+
+- Denon/Sharp table where confirmed by Alec/table cross-check: `Input Phono` = `addr 0x02 cmd 0xC3`, `Input CD` = `addr 0x02 cmd 0xC4`, then Tuner/CBL/SAT/TV Audio/Blu-ray/Aux/Game/Media at the corresponding table offsets.
+- Flipper/RC1253-style Denon Kaseikyo encoder for modern remote keys: `Bluetooth`, `Back`, `Option`, `HEOS`, `USB`, `Internet`, transport keys, Quick Selects, etc. Parsed address is `41 54 32 00` / vendor `0x3254`, encoded as genre `0x41`, ID `0`.
+
+If navigation still misses, sniff the original remote and compare against the RC1253 parsed commands before touching the macro sequence itself.

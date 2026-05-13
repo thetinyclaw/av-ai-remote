@@ -1,0 +1,48 @@
+ui_index,button_label,firmware_protocol,firmware_raw,firmware_address,firmware_command,expected_ir_command,validated_status,observed_result,candidate_next_command,notes
+0,Power On,PROTO_DENON,0,0x02,0xE1,PROTO_DENON addr=0x02 cmd=0xE1,passed,has been and is still good per Alec,,
+1,Power Off,PROTO_DENON,0,0x02,0xE2,PROTO_DENON addr=0x02 cmd=0xE2,passed,has been and is still good per Alec,,
+2,Vol +,PROTO_DENON,0,0x02,0xF1,PROTO_DENON addr=0x02 cmd=0xF1,passed,good after revert,,
+3,Vol -,PROTO_DENON,0,0x02,0xF2,PROTO_DENON addr=0x02 cmd=0xF2,passed,good after revert,,
+4,Mute,PROTO_DENON,0,0x02,0xF0,PROTO_DENON addr=0x02 cmd=0xF0,passed,good at addr=0x02 cmd=0xF0,,
+5,Bluetooth,PROTO_DENON_KASEIKYO,0,0x00325441,0x02EF,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x02EF,passed,correct per Alec after round 6,,Round 6 Flipper-compatible RC1253 Kaseikyo packing validated.
+6,Back,PROTO_DENON_KASEIKYO,0,0x00325441,0x0022,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0022,passed,correct per Alec after round 6,,Round 6 Flipper-compatible RC1253 Kaseikyo packing validated.
+7,Option,PROTO_DENON_KASEIKYO,0,0x00325441,0x03B5,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x03B5,passed,correct per Alec after round 6,,Round 6 Flipper-compatible RC1253 Kaseikyo packing validated.
+8,Setup,PROTO_DENON,0,0x0C,0xA0,PROTO_DENON addr=0x0C cmd=0xA0,passed,correct in round 4,,
+9,Up,PROTO_DENON,0,0x0C,0xA3,PROTO_DENON addr=0x0C cmd=0xA3,passed,correct in round 4,,
+10,Enter,PROTO_DENON,0,0x02,0xE0,PROTO_DENON addr=0x02 cmd=0xE0,passed,good after revert,,
+11,Right,PROTO_DENON,0,0x02,0xDD,PROTO_DENON addr=0x02 cmd=0xDD,passed,good after revert,,
+12,Down,PROTO_DENON,0,0x0C,0xA4,PROTO_DENON addr=0x0C cmd=0xA4,passed,correct in round 4,,
+13,Left,PROTO_DENON,0,0x0C,0x7F,PROTO_DENON addr=0x0C cmd=0x7F,passed,correct in round 4,,
+14,Input Phono,PROTO_DENON,0,0x02,0xC3,PROTO_DENON addr=0x02 cmd=0xC3,passed,works correctly; old Input Tuner fired PHONO,,
+15,Input CD,PROTO_DENON,0,0x02,0xC4,PROTO_DENON addr=0x02 cmd=0xC4,passed,works correctly; old Input V.Aux fired CD,,
+16,Input Tuner,PROTO_DENON,0,0x02,0xC5,PROTO_DENON addr=0x02 cmd=0xC5,passed,items 12–20 from earlier build worked correctly per Alec 2026-05-12 19:44; index shifted after adding Setup/Up,,
+17,Input CBL/SAT,PROTO_DENON,0,0x02,0xC8,PROTO_DENON addr=0x02 cmd=0xC8,passed,items 12–20 from earlier build worked correctly per Alec 2026-05-12 19:44; index shifted after adding Setup/Up,,
+18,Input TV Audio,PROTO_DENON,0,0x02,0xC9,PROTO_DENON addr=0x02 cmd=0xC9,passed,items 12–20 from earlier build worked correctly per Alec 2026-05-12 19:44; index shifted after adding Setup/Up,,
+19,Input Blu-ray,PROTO_DENON,0,0x02,0xCA,PROTO_DENON addr=0x02 cmd=0xCA,passed,items 12–20 from earlier build worked correctly per Alec 2026-05-12 19:44; index shifted after adding Setup/Up,,
+20,Input Aux,PROTO_DENON,0,0x02,0xCC,PROTO_DENON addr=0x02 cmd=0xCC,passed,items 12–20 from earlier build worked correctly per Alec 2026-05-12 19:44; index shifted after adding Setup/Up,,
+21,Input Game,PROTO_DENON,0,0x02,0xCD,PROTO_DENON addr=0x02 cmd=0xCD,passed,items 12–20 from earlier build worked correctly per Alec 2026-05-12 19:44; index shifted after adding Setup/Up,,
+22,Input Media,PROTO_DENON,0,0x02,0xCE,PROTO_DENON addr=0x02 cmd=0xCE,passed,items 12–20 from earlier build worked correctly per Alec 2026-05-12 19:44; index shifted after adding Setup/Up,,
+23,Stereo,PROTO_DENON,0,0x02,0xD1,PROTO_DENON addr=0x02 cmd=0xD1,unknown,,,
+24,Direct,PROTO_DENON,0,0x02,0xD2,PROTO_DENON addr=0x02 cmd=0xD2,unknown,,,
+25,Status,PROTO_DENON,0,0x02,0xD3,PROTO_DENON addr=0x02 cmd=0xD3,unknown,,,
+26,Power Toggle,PROTO_DENON_KASEIKYO,0,0x00325441,0x0005,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0005,passed,works per Alec round 7,,Round 7 live validation passed.
+27,Input USB,PROTO_DENON_KASEIKYO,0,0x00325441,0x02CE,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x02CE,passed,works as intended per Alec round 7,,Round 7 live validation passed.
+28,Input HEOS,PROTO_DENON_KASEIKYO,0,0x00325441,0x02C7,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x02C7,passed,works as intended per Alec round 7,,Round 7 live validation passed.
+29,Input Internet,PROTO_DENON_KASEIKYO,0,0x00325441,0x02E5,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x02E5,passed,works as intended per Alec round 7,,Round 7 live validation passed.
+30,Input Aux1 Dup,PROTO_DENON_KASEIKYO,0,0x00325441,0x02D9,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x02D9,passed_duplicate,redundant to existing Aux button per Alec round 7,,Keep documented but do not prioritize in UX; duplicates existing Aux behavior.
+31,Input 8K,PROTO_DENON_KASEIKYO,0,0x00325441,0x02DA,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x02DA,passed,Aux2 candidate is the 8K button per Alec round 7,,Relabeled from Input Aux2 after live validation; RC1253 command DA 02.
+32,Eco,PROTO_DENON_KASEIKYO,0,0x00325441,0x0368,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0368,needs_retest,,RC1253 Flipper source bytes address 41 54 32 00 command 68 03 00 00,Added from Flipper-IRDB Denon_RC1253.ir full remote inventory.
+33,Info,PROTO_DENON_KASEIKYO,0,0x00325441,0x0270,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0270,needs_retest,,RC1253 Flipper source bytes address 41 54 32 00 command 70 02 00 00,Added from Flipper-IRDB Denon_RC1253.ir full remote inventory.
+34,CH/Page +,PROTO_DENON_KASEIKYO,0,0x00325441,0x03B1,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x03B1,presumed_passed,presumed works but no current way to test per Alec round 7,RC1253 Flipper source bytes address 41 54 32 00 command B1 03 00 00,Needs future tuner/list context for direct validation.
+35,CH/Page -,PROTO_DENON_KASEIKYO,0,0x00325441,0x03B2,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x03B2,presumed_passed,presumed works but no current way to test per Alec round 7,RC1253 Flipper source bytes address 41 54 32 00 command B2 03 00 00,Needs future tuner/list context for direct validation.
+36,Play/Pause,PROTO_DENON_KASEIKYO,0,0x00325441,0x03E0,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x03E0,passed,works per Alec round 7,,Round 7 live validation passed.
+37,Prev/Tune -,PROTO_DENON_KASEIKYO,0,0x00325441,0x03E3,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x03E3,passed,works per Alec round 7,,Round 7 live validation passed.
+38,Next/Tune +,PROTO_DENON_KASEIKYO,0,0x00325441,0x03E4,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x03E4,passed,works per Alec round 7,,Round 7 live validation passed.
+39,Quick Select 1,PROTO_DENON_KASEIKYO,0,0x00325441,0x0124,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0124,passed,works per Alec round 7,,Round 7 live validation passed.
+40,Quick Select 2,PROTO_DENON_KASEIKYO,0,0x00325441,0x0125,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0125,passed,works per Alec round 7,,Round 7 live validation passed.
+41,Quick Select 3,PROTO_DENON_KASEIKYO,0,0x00325441,0x0126,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0126,passed,works per Alec round 7,,Round 7 live validation passed.
+42,Quick Select 4,PROTO_DENON_KASEIKYO,0,0x00325441,0x0127,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0127,passed,works per Alec round 7,,Round 7 live validation passed.
+43,Movie Mode,PROTO_DENON_KASEIKYO,0,0x00325441,0x0149,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0149,needs_retest,,RC1253 Flipper source bytes address 41 54 32 00 command 49 01 00 00,Added from Flipper-IRDB Denon_RC1253.ir full remote inventory.
+44,Music Mode,PROTO_DENON_KASEIKYO,0,0x00325441,0x014A,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x014A,needs_retest,,RC1253 Flipper source bytes address 41 54 32 00 command 4A 01 00 00,Added from Flipper-IRDB Denon_RC1253.ir full remote inventory.
+45,Game Mode,PROTO_DENON_KASEIKYO,0,0x00325441,0x014B,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x014B,needs_retest,,RC1253 Flipper source bytes address 41 54 32 00 command 4B 01 00 00,Added from Flipper-IRDB Denon_RC1253.ir full remote inventory.
+46,Pure Mode,PROTO_DENON_KASEIKYO,0,0x00325441,0x0135,PROTO_DENON_KASEIKYO Flipper addr=0x00325441 cmd=0x0135,needs_retest,,RC1253 Flipper source bytes address 41 54 32 00 command 35 01 00 00,Added from Flipper-IRDB Denon_RC1253.ir full remote inventory.
